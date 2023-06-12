@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 15. Task 2</title>
+    <style>
+        .btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+</head>
+<body>
+    <button class="btn">Нажмите, чтобы узнать размеры экрана</button>
+    <script>
+        const button = document.querySelector('.btn');
+        button.addEventListener('click', () => {
+            const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            alert(`Размер экрана: ${screenWidth}x${screenHeight}`);
+        });
+    </script>
+</body>
+</html>

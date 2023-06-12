@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 15. Task 3</title>
+    <style>
+        #chatbox {
+        width: 400px;
+        height: 300px;
+        overflow: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div id="chatbox"></div>
+    <input type="text" id="messageInput" />
+    <button id="sendButton">Отправить</button>
+    <button id="locationButton">Геолокация</button>
+
+    <script>
+    const chatbox = document.getElementById('chatbox');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const locationButton = document.getElementById('locationButton');
+    const serverUrl = 'wss://echo-ws-service.herokuapp.com';
+    let websocket;
+
+// Подключение к серверу
+    function connect() {    
+      websocket = new WebSocket(serverUrl);
+
+// Обработчик открытия соединения
+      websocket.onopen = function(event) {
+        printMessage('Соединение установлено');
+      };
+
+// Обработчик получения сообщения
+      websocket.onmessage = function(event) {
+        printMessage(event.data);
+      };
+
+// Обработчик закрытия соединения
+      websocket.onclose = function(event) {
+        printMessage('Соединение закрыто');
+      };
+    }
+
+// Отправка сообщения на сервер
+    function sendMessage() {
+      const message = messageInput.value;
+      websocket.send(message);
+      printMessage(message);
+      messageInput.value = '';
+    }
+
+// Вывод сообщения в ок      но чата
+    function printMessage(message) {
+      const messageElement = document.createElement('p');
+      messageElement.textContent = message;
+      chatbox.appendChild(messageElement);
+    }
+
+// Отправка геолокации на сервер
+    function sendLocation() {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const mapLink = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=17/${latitude}/${longitude}`;
+        printMessage(`Моя геолокация: ${mapLink}`);
+      });
+    }
+
+// Обработчик нажатия кнопки "Отправить"
+    sendButton.addEventListener('click', function() {
+      if (websocket.readyState === WebSocket.OPEN) {
+        sendMessage();
+      } else {
+        printMessage('Ошибка: соединение закрыто');
+      }
+    });
+
+// Обработчик нажатия кнопки "Геолокация"
+    locationButton.addEventListener('click', function() {
+      if (navigator.geolocation) {
+        sendLocation();
+      } else {
+        printMessage('Ошибка: геолокация не поддерживается');
+      }
+    });
+
+// Подключение к серверу при загрузке страницы
+    connect();
+    </script>
+</body>
+</html>
